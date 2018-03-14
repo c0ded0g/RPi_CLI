@@ -42,12 +42,6 @@ def sendMessage(message):
   conn.getresponse()
   return;
 
-def getMessageID(message):
-  # return the integer value at the start of the message
-  split_message = message.split()
-  result = split_message[0]
-  return result;
-
 # CONST, VAR, ...
 ser = serial.Serial('/dev/ttyACM0',9600)
 s = [0,1]
@@ -57,17 +51,25 @@ while True:
   # get next string from the Arduino
   # expected format: nnn:string (nnn = 0..999)
   read_serial=ser.readline()
-  messageType = getMessageID(read_serial)
   split_message = read_serial.split()
   messageID = int(split_message[0])
-  #s[0] = str(int(read_serial,16))
-  #print s[0]
-  print read_serial
-  print messageID
-  messageID += 1
-  print messageID
+  
+  if messageID < 20:
+    print messageID
+    print "***"
+  elif messageID == 100:
+    print messageID
+    messageText = 'call received at ' + split_message[1] + ' from ' + split_message[2]
+    sendMessage(messageText)
+  elif messageID == 300:
+    print messageID
+  elif messageID == 14500:
+    sendMessage("jackpot")
+  else:
+    print messageID
+    print messageID+1
+    print split_message[1];
     
-  # parse the string and if it matches a criterion, send pushover message
   # sendMessage(read_serial)
 
 
