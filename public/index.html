@@ -1,0 +1,46 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="index.css" >
+    <script src = "/socket.io/socket.io.js" > </script>
+    <script> var socket = io(); </script>
+    <script type=text/javascript src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+    <script> 
+        var socket = io.connect();
+        socket.on('ipaddr', function(data){
+            document.getElementById("ipaddr").innerHTML=data;
+        });
+        socket.on('ipport', function(data){
+            document.getElementById("ipport").innerHTML=data;
+        });
+        socket.on('serialEvent', function(data){
+            document.getElementById("serialEvent").innerHTML=data;
+        });
+    </script>
+  </head>
+  <body>
+    <div id="container">
+      <div id="header">
+        <text>Welcome to greenPi</text>
+        <table width="100%">
+          <tr>
+            <th align="left">Raspberry Pi 3B+</th>
+            <th align="center">(greenPi)</th>
+            <th align="right">Address:Port</th>
+          </tr>
+          <tr>
+            <td align="left"><label id="msg1"></label>you are :</td>
+            <td align="center"></td>
+            <td align="right"><label id="ipaddr"></label>:<label id="ipport"></label></td>
+          </tr>
+          <tr>
+            <td align="left"><label id="msg2"></label>serial port :</td>
+            <td align="right"><label id="serialEvent"></label></td>
+          </tr>
+        </table>
+      </div>
+      <div id="footer">
+        Copyright 2018 codeDog
+      </div>
+    </div>
+  </body>
+</html>
