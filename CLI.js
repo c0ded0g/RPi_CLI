@@ -3,23 +3,32 @@
  *
  * USAGE:	node CLI.js
  *
- * DESCRIPTION:	Monitor CLI from Arduino.
+ * DESCRIPTION:	
+ * Monitor serial data from an Arduino.
  * Send SMS/PushOver message when certain messages are received.
- * Serve a webpage containing Arduino messages.
+ * Serve a webpage containing the Arduino messages.
  *
  * AUTHOR: 	Mark Wrigley
  * CREATED:     13.03.2018
  * REVISIONS:   
  *              
+ * FILES:
+ *
+ * CLI.js
+ *  |-public
+ *  |   |-index.html
+ *
  * CONFIG:	
  * RPI connected via USB to Arduino.
  *
- * Adapted from GPIO code.
- * Added SerialPort, so as to read strings from the Arduino.
+ * NOTES:
+ * Adapted from original GPIO code.
  *
- * create subdir 'public' and store the following files there:
- *   index.html
- *   ...?
+ * TO DO:
+ * (1) Arduino Serial Port Connection.
+ * Reliably determine which port the Arduino is connected to.
+ * Sometimes it is ACM0, other times ACM1, ...
+ * Can it be detected? Or bound somehow?
  *
  */
  
@@ -43,15 +52,17 @@ const controlPanel = io.listen(app);
 //--SERIAL PORT----------------------------------------------------------------
 
 /**
- * TO DO: auto detect which port the Arduino is using, or
- * set up some config to bind Arduino to one port only. Sometimes
- * the Arduino comes up on ACM0, sometimes on ACM1.
- *
+ * For usage, see:
  * https://github.com/node-serialport/node-serialport/blob/5.0.0/README.md
  */
  
 const ReadLine = SerialPort.parsers.Readline;
 const portName = '/dev/ttyACM0';
+// guaranteed (I hope) to be on ttyACM0
+// see /etc/udev/rules.d/10-local.rules, which contains
+// SUBSYSTEM=="tty", KERNEL=="ttyACM*", KERNELS=="1-1.3.3", SYMLINK+="arduino"
+
+
 //const parser = new ReadLine({delimiter: '\r\n'});
 const parser = new ReadLine();
 const ArduinoPort = new SerialPort(portName, {
@@ -63,14 +74,58 @@ const ArduinoPort = new SerialPort(portName, {
 });
 ArduinoPort.pipe(parser);
 
-
-
 // when data received from Arduino on the serial port, send it to web clients
+// format of serial data is JSON, one line per object
+// multiple name/value pairs may be given per object
+// { "name1":value1, "name2":value2 }
+// {"A0":123, "V1":456}
 parser.on('data', function (data) {
-  controlPanel.sockets.emit('serialEvent', '@['+timeStamp()+']: '+data);
+  // get parameters
+  var s = JSON.parse(data);
+  console.log('received:',data);
+
+  // look for specific keys in the received object & take
+  // specific action for each key present
+  
+  if (s.hasOwnProperty("A0")) {
+    console.log(s.A0);
+    controlPanel.sockets.emit('serialEvent', 'A0', s.A0);
+  }
+
+  if (s.hasOwnProperty("A1")) {
+    console.log(s.A1);
+    controlPanel.sockets.emit('serialEvent', 'A1', s.A1);
+  }
+  if (s.hasOwnProperty("A2")) {
+    console.log(s.A2);
+    controlPanel.sockets.emit('serialEvent', 'A2', s.A2);
+  }
+
+  if (s.hasOwnProperty("A3")) {
+    console.log(s.A3);
+    controlPanel.sockets.emit('serialEvent', 'A3', s.A3);
+  }
+  if (s.hasOwnProperty("A4")) {
+    console.log(s.A4);
+    controlPanel.sockets.emit('serialEvent', 'A4', s.A4);
+  }
+
+  if (s.hasOwnProperty("A5")) {
+    console.log(s.A5);
+    controlPanel.sockets.emit('serialEvent', 'A5', s.A5);
+  }
+  
+  if (s.hasOwnProperty("V1")) {
+    console.log(s.V1);
+    controlPanel.sockets.emit('serialEvent', 'V1', s.V1);
+  }
+  
+  console.log('========');
+  //controlPanel.sockets.emit('serialEvent', '@['+timeStamp()+']: '+data);
+
   // debugging:
-  x++;
-  console.log('Arduino: (',x,') ',timeStamp()+' '+data);
+  //x++;
+  //console.log('Arduino: (',x,') ',timeStamp()+' '+data);
 });
 
 //--VAR------------------------------------------------------------------------
@@ -143,6 +198,7 @@ function exit() {
 //-----------------------------------------------------------------------------
 
 function timeStamp() {
+  // return current time
   var d = new Date();
   var tsH = d.getHours();
   var tsM = d.getMinutes();

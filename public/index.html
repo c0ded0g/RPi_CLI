@@ -12,8 +12,28 @@
         socket.on('ipport', function(data){
             document.getElementById("ipport").innerHTML=data;
         });
-        socket.on('serialEvent', function(data){
-            document.getElementById("serialEvent").innerHTML=data;
+        socket.on('serialEvent', function(data1,data2){
+          if (data1 == 'A0') {
+            document.getElementById("nameA0").innerHTML=data2;
+            }
+          if (data1 == 'A1') {
+            document.getElementById("nameA1").innerHTML=data2;
+            }
+          if (data1 == 'A2') {
+            document.getElementById("nameA2").innerHTML=data2;
+            }
+          if (data1 == 'A3') {
+            document.getElementById("nameA3").innerHTML=data2;
+            }
+          if (data1 == 'A4') {
+            document.getElementById("nameA4").innerHTML=data2;
+            }
+          if (data1 == 'A5') {
+            document.getElementById("nameA5").innerHTML=data2;
+            }
+          if (data1 == 'V1') {
+            document.getElementById("nameV1").innerHTML=data2;
+          }
         });
     </script>
   </head>
@@ -33,8 +53,32 @@
             <td align="right"><label id="ipaddr"></label>:<label id="ipport"></label></td>
           </tr>
           <tr>
-            <td align="left"><label id="msg2"></label>serial port :</td>
-            <td align="right"><label id="serialEvent"></label></td>
+            <td align="left"><label id="msg2"></label>Param=A0, value=
+            <label id="nameA0"></label></td>
+          </tr>
+          <tr>
+            <td align="left"><label id="msg3"></label>Param=A1, value=
+            <label id="nameA1"></label></td>
+          </tr>
+          <tr>
+            <td align="left"><label id="msg4"></label>Param=A2, value=
+            <label id="nameA2"></label></td>
+          </tr>
+          <tr>
+            <td align="left"><label id="msg5"></label>Param=A3, value=
+            <label id="nameA3"></label></td>
+          </tr>
+          <tr>
+            <td align="left"><label id="msg6"></label>Param=A4, value=
+            <label id="nameA4"></label></td>
+          </tr>
+          <tr>
+            <td align="left"><label id="msg7"></label>Param=A5, value=
+            <label id="nameA5"></label></td>
+          </tr>
+          <tr>
+            <td align="left"><label id="msg4"></label>Param=V1, value=
+            <label id="nameV1"></label></td>
           </tr>
         </table>
       </div>
